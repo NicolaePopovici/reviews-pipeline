@@ -10,6 +10,7 @@ python = "^3.12"
 sqlalchemy = "^2.0.36"
 uuid = "^1.30"
 python-dotenv = "^1.0.1"
+psycopg2 = "^2.9.10"
 
 [build-system]
 requires = ["poetry-core"]

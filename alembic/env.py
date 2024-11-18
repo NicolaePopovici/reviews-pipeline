@@ -1,13 +1,19 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from reviews_pipeline.database import get_database_url, models
 
 # this is the Alembic Config object, which provides
-# access to the values within the .ini file in use.
+# access to the values within the alembic.ini file in use.
 config = context.config
+
+# overwrite the database URL
+# this tells alembic which database to apply the migration changes
+# alembic needs % characters doubled: https://github.com/sqlalchemy/alembic/issues/700
+db_url = get_database_url().render_as_string(hide_password=False).replace("%", "%%")
+config.set_main_option("sqlalchemy.url", db_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -16,9 +22,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = models.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -41,7 +45,9 @@ def run_migrations_offline() -> None:
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
+        include_schemas=True,
         target_metadata=target_metadata,
+        version_table_schema=target_metadata.schema,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
     )
@@ -65,10 +71,15 @@ def run_migrations_online() -> None:
 
     with connectable.connect() as connection:
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            include_schemas=True,
+            target_metadata=target_metadata,
+            version_table_schema=target_metadata.schema,
         )
 
         with context.begin_transaction():
+            context.execute(f"create schema if not exists {target_metadata.schema};")
+            context.execute(f"set search_path to {target_metadata.schema}")
             context.run_migrations()
 
 

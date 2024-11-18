@@ -1,10 +1,10 @@
-import os
 from typing import Any, Generator
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import URL, create_engine, MetaData
 from sqlalchemy.orm import Session, sessionmaker
 
-from reviews_pipeline.settings import logger
+from reviews_pipeline import settings
+logger = settings.logger
 
 
 def get_database_url() -> URL:
@@ -14,22 +14,24 @@ def get_database_url() -> URL:
     try:
         url = URL.create(
             drivername="postgresql",
-            username=os.environ["POSTGRES_USER"],
-            password=os.environ["POSTGRES_PASSWORD"],  # unescaped password
-            host=os.environ["POSTGRES_URL"],
-            port=os.environ["POSTGRES_PORT"],
-            database=os.environ["POSTGRES_DB"],
+            username=settings.POSTGRES_USER,
+            password=settings.POSTGRES_PASSWORD,
+            host=settings.POSTGRES_URL,
+            port=settings.POSTGRES_PORT,
+            database=settings.POSTGRES_DB
         )
     except KeyError:
-        logger.error("No PostgreSQL settings found in environment variables.")
-        raise KeyError
+        message = "No PostgreSQL settings found in environment variables."
+        logger.error(message)
+        raise KeyError(message)
 
     return url
 
 
-dbschema = os.getenv("POSTGRES_DB_SCHEMA")
+dbschema = settings.POSTGRES_DB_SCHEMA
 url = get_database_url()
 
+logger.info(f"Connecting to database {url} with schema {dbschema}")
 engine = create_engine(
     url, connect_args={"options": "-csearch_path={}".format(dbschema)}
 )
