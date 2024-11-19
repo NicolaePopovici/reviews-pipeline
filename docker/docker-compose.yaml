@@ -18,3 +18,22 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+
+  reviews-pipeline:
+    container_name: reviews-pipeline
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile
+    command: [ "poetry", "run", "python", "reviews_pipeline/main.py" ]
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 9345:9345
+    env_file:
+      - ../.env
+    working_dir: /reviews-pipeline
+    volumes:
+      - ../app:/reviews-pipeline/reviews-pipeline
+    networks:
+      - default
