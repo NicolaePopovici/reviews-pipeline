@@ -24,7 +24,7 @@ services:
     build:
       context: ../.
       dockerfile: ./docker/Dockerfile
-    command: [ "poetry", "run", "python", "reviews_pipeline/main.py" ]
+    command: [ "poetry", "run", "python", "app/reviews_pipeline/main.py" ]
     depends_on:
       db:
         condition: service_healthy
