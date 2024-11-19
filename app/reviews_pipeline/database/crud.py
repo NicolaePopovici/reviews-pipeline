@@ -30,6 +30,7 @@ def get_reviewer_by_email(session: Session, email: str, reviewer_name: str, coun
             id=uuid.uuid4(),
             email_address=email,
             name=reviewer_name,
+            country_id=country.id,
             country=country
         )
         session.add(reviewer)
@@ -56,9 +57,10 @@ def create_review(session: Session, reviewer: models.Reviewer, title: str, ratin
 
     return review
 
-def get_country_by_name(session: Session, name: str) -> Optional[models.Country]:
+
+def get_country(session: Session, name: str) -> Optional[models.Country]:
     logger.info(f"Checking if country {name} exists")
-    
+
     try:
         country = session.query(models.Country).filter_by(name=name).first()
     except Exception as e:
@@ -67,9 +69,21 @@ def get_country_by_name(session: Session, name: str) -> Optional[models.Country]
 
     return country
 
+def get_country_by_id(session: Session, id: uuid) -> Optional[models.Country]:
+    logger.info(f"Checking if country {id} exists")
+
+    try:
+        country = session.query(models.Country).filter_by(id=id).first()
+    except Exception as e:
+        logger.error(f"Error retrieving country: {e}")
+        raise e
+
+    return country
+
+
 def create_country(session: Session, name: str) -> models.Country:
     logger.info(f"Creating country: {name}")
-    
+
     try:
         country = models.Country(
             id=uuid.uuid4(),
@@ -81,3 +95,33 @@ def create_country(session: Session, name: str) -> models.Country:
         raise e
 
     return country
+
+
+def get_reviewer(session: Session, email_address: str) -> Optional[models.Country]:
+    logger.info(f"Checking if reviewer {email_address} exists")
+
+    try:
+        reviewer = session.query(models.Reviewer).filter_by(email_address=email_address).first()
+    except Exception as e:
+        logger.error(f"Error retrieving reviewer: {e}")
+        raise e
+
+    return reviewer
+
+
+def create_reviewer(session: Session, email_address: str, name: str, country_id: uuid) -> models.Reviewer:
+    logger.info(f"Creating reviewer: {email_address}")
+
+    try:
+        reviewer = models.Reviewer(
+            id=uuid.uuid4(),
+            email_address=email_address,
+            name=name,
+            country_id=country_id
+        )
+        session.add(reviewer)
+    except Exception as e:
+        logger.error(f"Error creating reviewer: {e}")
+        raise e
+
+    return reviewer

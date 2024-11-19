@@ -32,7 +32,7 @@ class Reviewer(Base):
     country: Mapped["Country"] = relationship(
         "Country", back_populates="reviewers")
     reviews: Mapped[list["Review"]] = relationship(
-        "Review", back_populates="reviewer")
+        "Review", back_populates="reviewer", cascade="all, delete-orphan")
 
 
 class Review(Base):

@@ -1,13 +1,11 @@
 from app.api.models import Country, Countries, CountryCreate, CountryPut
 import uuid
 from typing import Any
-
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlmodel import func, select
 from app.reviews_pipeline.database import get_database, models, crud
 from app.reviews_pipeline import settings
-
 
 router = APIRouter()
 logger = settings.logger
@@ -15,13 +13,12 @@ logger = settings.logger
 
 @router.get("/", response_model=Countries)
 def read_countries(session: Session = Depends(get_database), skip: int = 0, limit: int = 100) -> Any:
+    logger.info(f"Reading countries with skip={skip} and limit={limit}")
     try:
         count_statement = select(func.count()).select_from(models.Country)
         count = session.scalar(count_statement)
-        logger.info(f"Found {count} countries")
         statement = select(models.Country).offset(skip).limit(limit)
         countries = session.scalars(statement).all()
-        logger.info(f"Returning {len(countries)} countries")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -48,7 +45,7 @@ def read_country(country_id: uuid.UUID, session: Session = Depends(get_database)
 @router.post("/", response_model=Country)
 def create_country(country_in: CountryCreate, session: Session = Depends(get_database)) -> Any:
     try:
-        country = crud.get_country_by_name(session=session, name=country_in.name)
+        country = crud.get_country(session=session, name=country_in.name)
         if country:
             raise HTTPException(
                 status_code=400,
@@ -87,7 +84,7 @@ def update_country(country_id: uuid.UUID, country_in: CountryPut, session: Sessi
 def delete_country(country_id: uuid.UUID, session: Session = Depends(get_database)) -> Any:
     try:
         statement = select(models.Country).where(models.Country.id == country_id)
-        country = session.scalars(statement).one()
+        country = session.scalar(statement)
         if not country:
             raise HTTPException(status_code=404, detail="Country not found")
         session.delete(country)

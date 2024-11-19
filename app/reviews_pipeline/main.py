@@ -14,9 +14,6 @@ from app.reviews_pipeline.schema import CSVRow
 logger = settings.logger
 
 
-# models.Base.metadata.create_all(bind=engine)
-
-
 def process(session: Session):
     # Initialize S3 client
     # TODO: Use a singleton client to avoid creating a new client for each request
