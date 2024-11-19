@@ -69,6 +69,7 @@ def get_country(session: Session, name: str) -> Optional[models.Country]:
 
     return country
 
+
 def get_country_by_id(session: Session, id: uuid) -> Optional[models.Country]:
     logger.info(f"Checking if country {id} exists")
 
@@ -109,6 +110,18 @@ def get_reviewer(session: Session, email_address: str) -> Optional[models.Countr
     return reviewer
 
 
+def get_reviewer_by_id(session: Session, id: uuid) -> Optional[models.Country]:
+    logger.info(f"Checking if reviewer {id} exists")
+
+    try:
+        reviewer = session.query(models.Reviewer).filter_by(id=id).first()
+    except Exception as e:
+        logger.error(f"Error retrieving reviewer: {e}")
+        raise e
+
+    return reviewer
+
+
 def create_reviewer(session: Session, email_address: str, name: str, country_id: uuid) -> models.Reviewer:
     logger.info(f"Creating reviewer: {email_address}")
 
@@ -125,3 +138,23 @@ def create_reviewer(session: Session, email_address: str, name: str, country_id:
         raise e
 
     return reviewer
+
+
+def create_review(session: Session, reviewer_id: uuid, title: str, rating: int, content: str, date: date) -> models.Review:
+    logger.info(f"Creating review: {title}")
+
+    try:
+        review = models.Review(
+            id=uuid.uuid4(),
+            reviewer_id=reviewer_id,
+            title=title,
+            rating=rating,
+            content=content,
+            date=date
+        )
+        session.add(review)
+    except Exception as e:
+        logger.error(f"Error creating review: {e}")
+        raise e
+
+    return review
