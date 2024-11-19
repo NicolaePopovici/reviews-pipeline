@@ -27,6 +27,7 @@ POSTGRES_URL = os.getenv("POSTGRES_URL")
 POSTGRES_PORT = os.getenv("POSTGRES_PORT")
 POSTGRES_DB = os.getenv("POSTGRES_DB")
 POSTGRES_DB_SCHEMA = os.getenv("POSTGRES_DB_SCHEMA")
+API_V1_STR = os.getenv("API_V1_STR", "/api/v1")
 
 BUCKET_NAME = os.getenv("BUCKET_NAME")
 KEY = os.getenv("KEY")

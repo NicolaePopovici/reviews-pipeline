@@ -6,11 +6,11 @@ from botocore import UNSIGNED
 from botocore.client import Config
 
 from pydantic import ValidationError
-from reviews_pipeline.database import crud
-from reviews_pipeline.database import session_manager
+from app.reviews_pipeline.database import crud
+from app.reviews_pipeline.database import session_manager
 
-from reviews_pipeline import settings
-from reviews_pipeline.schema import CSVRow
+from app.reviews_pipeline import settings
+from app.reviews_pipeline.schema import CSVRow
 logger = settings.logger
 
 

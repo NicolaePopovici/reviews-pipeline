@@ -18,11 +18,11 @@ RUN pip install "fastapi[standard]"
 # Allow installing dev dependencies to run tests
 RUN poetry install --no-dev
 
-COPY ./reviews_pipeline /reviews-pipeline/reviews_pipeline/
+COPY ./app /reviews-pipeline/app/
 
-COPY ./alembic /reviews_pipeline/alembic/
-COPY ./alembic.ini /reviews_pipeline/alembic.ini
+COPY ./alembic /reviews-pipeline/alembic/
+COPY ./alembic.ini /reviews-pipeline/alembic.ini
 
-ENV PYTHONPATH="${PYTHONPATH}:/reviews_pipeline/"
+ENV PYTHONPATH="${PYTHONPATH}:/reviews-pipeline/"
 
 CMD ["fastapi", "run", "app/main.py", "--port", "80"]

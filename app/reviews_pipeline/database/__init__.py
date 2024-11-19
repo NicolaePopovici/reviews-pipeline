@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import URL, create_engine, MetaData
 from sqlalchemy.orm import Session, sessionmaker
 
-from reviews_pipeline import settings
+from app.reviews_pipeline import settings
 logger = settings.logger
 
 

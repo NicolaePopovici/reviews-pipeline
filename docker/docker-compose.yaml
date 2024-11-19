@@ -34,6 +34,25 @@ services:
       - ../.env
     working_dir: /reviews-pipeline
     volumes:
-      - ../app:/reviews-pipeline/reviews-pipeline
+      - ../app:/reviews-pipeline/app
+    networks:
+      - default
+
+  reviews-api:
+    container_name: reviews-api
+    build:
+      context: ../.
+      dockerfile: ./docker/Dockerfile
+    command: bash -c "alembic upgrade head && poetry run uvicorn --host 0.0.0.0 --port 8000 app.api.main:app --reload"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8000:8000
+    env_file:
+      - ../.env
+    working_dir: /reviews-pipeline
+    volumes:
+      - ../app:/reviews-pipeline/app
     networks:
       - default

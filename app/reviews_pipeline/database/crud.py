@@ -2,8 +2,8 @@ import uuid
 from datetime import date
 from sqlalchemy.orm import Session
 from typing import Optional
-from reviews_pipeline.database import models
-from reviews_pipeline import settings
+from app.reviews_pipeline.database import models
+from app.reviews_pipeline import settings
 logger = settings.logger
 
 
@@ -55,3 +55,29 @@ def create_review(session: Session, reviewer: models.Reviewer, title: str, ratin
         raise e
 
     return review
+
+def get_country_by_name(session: Session, name: str) -> Optional[models.Country]:
+    logger.info(f"Checking if country {name} exists")
+    
+    try:
+        country = session.query(models.Country).filter_by(name=name).first()
+    except Exception as e:
+        logger.error(f"Error retrieving country: {e}")
+        raise e
+
+    return country
+
+def create_country(session: Session, name: str) -> models.Country:
+    logger.info(f"Creating country: {name}")
+    
+    try:
+        country = models.Country(
+            id=uuid.uuid4(),
+            name=name
+        )
+        session.add(country)
+    except Exception as e:
+        logger.error(f"Error creating country: {e}")
+        raise e
+
+    return country
