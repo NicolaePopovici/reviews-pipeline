@@ -3,7 +3,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
-from app.reviews_pipeline.database import get_database_url, models
+from app.database import get_database_url, models
 
 # this is the Alembic Config object, which provides
 # access to the values within the alembic.ini file in use.

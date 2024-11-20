@@ -5,8 +5,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from sqlmodel import func, select
 
-from app.reviews_pipeline import settings
-from app.reviews_pipeline.database import get_database, models, crud
+from app import settings
+from app.database import get_database, models, crud
 from app.api.models import Reviewer, Reviewers, ReviewerCreate, ReviewerPut
 
 router = APIRouter()

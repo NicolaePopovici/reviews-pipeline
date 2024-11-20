@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from fastapi import FastAPI
 
 from app.api.routes import countries, reviewers, reviews
-from app.reviews_pipeline.settings import API_V1_STR
+from app.settings import API_V1_STR
 
 app = FastAPI()
 

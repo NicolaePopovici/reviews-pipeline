@@ -2,8 +2,8 @@ import uuid
 from datetime import date
 from sqlalchemy.orm import Session
 from typing import Optional
-from app.reviews_pipeline.database import models
-from app.reviews_pipeline import settings
+from app.database import models
+from app import settings
 logger = settings.logger
 
 
@@ -36,27 +36,6 @@ def get_reviewer_by_email(session: Session, email: str, reviewer_name: str, coun
         session.add(reviewer)
 
     return reviewer
-
-
-def create_review(session: Session, reviewer: models.Reviewer, title: str, rating: int, content: str, review_date: date) -> models.Review:
-    logger.info(f"Saving review: {title}")
-
-    try:
-        review = models.Review(
-            id=uuid.uuid4(),
-            reviewer_id=reviewer.id,
-            title=title,
-            rating=rating,
-            content=content,
-            date=review_date,
-        )
-        session.add(review)
-    except Exception as e:
-        logger.error(f"Error saving review: {e}")
-        raise e
-
-    return review
-
 
 def get_country(session: Session, name: str) -> Optional[models.Country]:
     logger.info(f"Checking if country {name} exists")
